@@ -1,5 +1,6 @@
 local mode = {}
 local modes = {}
+local allModes = {}
 
 local currentMode = "newGame"
 
@@ -17,7 +18,7 @@ function mode:new(instance)
 ---@param name string
 function mode:setName(name)
     self.name = name
-    modes[name] = self
+    allModes[name] = self
     return self
 end
 
@@ -37,7 +38,6 @@ end
 ---@param text string
 function mode:setText(text)
     self.text = text
-    
     return self
 end
 
@@ -53,13 +53,46 @@ function mode:onSelect()
     self.select()
 end
 
+function mode:arrowUp(func)
+    self.up = func
+    return self
+end
+
+function mode:arrowDown(func)
+    self.down = func
+    return self
+end
+
+function mode:updateText()
+    mainText:setText(self.text)
+end
+
+function mode:onArrowUp()
+    self.up()
+end
+
+function mode:onArrowDown()
+    self.down()
+end
+
+function mode:getName()
+    return self.name
+end
+
 function modes.setMode(newMode)
     currentMode = newMode
-    modes[newMode]:onSelect()
+    allModes[newMode]:onSelect()
 end
+
+
+
 
 function modes.getMode()
     return currentMode
+end
+
+function modes.getModes()
+    return allModes
 end
 
 return mode, modes
